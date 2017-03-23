@@ -6,8 +6,9 @@ use Space48\ConversantDataLayer\Helper\Data as ConversantHelper;
 
 class CategoryView extends \Magento\Framework\View\Element\Template
 {
-    const TOP_LEVEL_CATEGORY = "toplevel";
-    const SUBCATEGORY = "subcategory";
+    const DEPARTMENT = 2;
+    const CATEGORY = 3;
+    const SUBCATEGORY = 4;
 
     /**
      * @var Category
@@ -38,6 +39,8 @@ class CategoryView extends \Magento\Framework\View\Element\Template
      */
     protected $categoryRepository;
 
+    protected $categoryLevel;
+
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
         \Magento\Framework\Json\Helper\Data $jsonHelper,
@@ -50,6 +53,9 @@ class CategoryView extends \Magento\Framework\View\Element\Template
         $this->jsonHelper = $jsonHelper;
         $this->conversantHelper = $conversantHelper;
         $this->categoryRepository = $categoryRepository;
+
+        $this->categoryLevel = $this->getCategory()->getLevel();
+
         parent::__construct($context, $data);
     }
 
@@ -82,25 +88,22 @@ class CategoryView extends \Magento\Framework\View\Element\Template
         return $categories;
     }
 
-    public function getCategoryType()
-    {
-        return $this->getCategory()->getLevel() <= 2
-            ? self::TOP_LEVEL_CATEGORY
-            : self::SUBCATEGORY;
-    }
-
     public function getOutput()
     {
         $json = $result = array();
+        $parentCategories = $this->getParentCategoryIds();
 
-        if ($this->getCategoryType() == self::TOP_LEVEL_CATEGORY) {
-            $json['promo_id'] = "3";
+        if ($this->categoryLevel <= self::DEPARTMENT) {
+            $json['promo_id'] = (string) self::DEPARTMENT;
             $json['category'] = $this->getCategory()->getName();
-        }
 
-        if ($this->getCategoryType() == self::SUBCATEGORY) {
-            $parentCategories = $this->getParentCategoryIds();
-            $json['promo_id'] = "4";
+        } elseif ($this->categoryLevel == self::CATEGORY) {
+            $json['promo_id'] = (string) self::CATEGORY;
+            $json['category'] = $this->getCategory()->getName();
+            $json['department'] = $this->getCategoryById($parentCategories['department'])->getName();
+
+        } else {
+            $json['promo_id'] = (string) self::SUBCATEGORY;
             $json['sub_category'] = $this->getCategory()->getName();
             $json['category'] = $this->getCategoryById($parentCategories['parent'])->getName();
             $json['department'] = $this->getCategoryById($parentCategories['department'])->getName();
