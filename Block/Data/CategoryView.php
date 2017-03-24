@@ -39,6 +39,9 @@ class CategoryView extends \Magento\Framework\View\Element\Template
      */
     protected $categoryRepository;
 
+    /**
+     * @var Integer
+     */
     protected $categoryLevel;
 
     public function __construct(
@@ -53,7 +56,6 @@ class CategoryView extends \Magento\Framework\View\Element\Template
         $this->jsonHelper = $jsonHelper;
         $this->conversantHelper = $conversantHelper;
         $this->categoryRepository = $categoryRepository;
-
         $this->categoryLevel = $this->getCategory()->getLevel();
 
         parent::__construct($context, $data);
