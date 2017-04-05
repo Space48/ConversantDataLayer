@@ -30,6 +30,22 @@ A Conversant module for Magento that integrates with our GTM DataLayer module: h
 
 - promo_id
 
-### Configuration
+## Installation
+
+**Manual**
+
+To install this module copy the code from this repo to `app/code/Space48/ConversantDataLayer` folder of your Magento 2 instance, then you need to run php `bin/magento setup:upgrade`
+
+**Composer**:
+
+From the terminal execute the following:
+
+`composer config repositories.space48-conversant-datalayer vcs git@github.com:Space48/ConversantDataLayer.git`
+
+then
+
+`composer require "space48/conversantdatalayer:dev-master"`
+
+## How to use
 
 Go to `Stores > Configuration > Space48 > GTM DataLayer > Conversant` to configure/enable.
