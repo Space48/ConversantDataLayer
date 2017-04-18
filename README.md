@@ -44,7 +44,7 @@ From the terminal execute the following:
 
 then
 
-`composer require "space48/conversantdatalayer:dev-master"`
+`composer require "space48/conversantdatalayer:{module-version}"`
 
 ## How to use
 
