@@ -35,11 +35,10 @@ class ProductView extends \Magento\Framework\View\Element\Template
     public function __construct(
         \Magento\Catalog\Block\Product\Context $context,
         \Magento\Framework\Json\Helper\Data $jsonHelper,
-        \Magento\Framework\Registry $registry,
         ConversantHelper $conversantHelper,
         array $data = []
     ) {
-        $this->_coreRegistry = $registry;
+        $this->_coreRegistry = $context->getRegistry();
         $this->jsonHelper = $jsonHelper;
         $this->conversantHelper = $conversantHelper;
         $this->imageBuilder = $context->getImageBuilder();
