@@ -3,6 +3,7 @@
 namespace Space48\ConversantDataLayer\Block\Data;
 
 use Space48\ConversantDataLayer\Helper\Data as ConversantHelper;
+use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory as CategoryCollectionFactory;
 
 class ProductView extends \Magento\Framework\View\Element\Template
 {
@@ -32,16 +33,30 @@ class ProductView extends \Magento\Framework\View\Element\Template
      */
     protected $jsonHelper;
 
+    /**
+     * @var \Magento\Catalog\Model\CategoryRepository
+     */
+    protected $categoryRepository;
+
+    /**
+     * @var \Magento\Catalog\Model\ResourceModel\Category\CollectionFactory
+     */
+    protected $categoryCollectionFactory;
+
     public function __construct(
         \Magento\Catalog\Block\Product\Context $context,
         \Magento\Framework\Json\Helper\Data $jsonHelper,
         ConversantHelper $conversantHelper,
+        CategoryCollectionFactory $categoryCollectionFactory,
+        \Magento\Catalog\Model\CategoryRepository $categoryRepository,
         array $data = []
     ) {
         $this->_coreRegistry = $context->getRegistry();
         $this->jsonHelper = $jsonHelper;
         $this->conversantHelper = $conversantHelper;
         $this->imageBuilder = $context->getImageBuilder();
+        $this->categoryCollectionFactory = $categoryCollectionFactory;
+        $this->categoryRepository = $categoryRepository;
         parent::__construct($context, $data);
     }
 
@@ -73,6 +88,7 @@ class ProductView extends \Magento\Framework\View\Element\Template
     public function getOutput()
     {
         $json = $result = array();
+        $json = $this->getCategoryData($json);
         $json['promo_id'] = "5";
 
         if ($brand = $this->getBrand()) {
@@ -120,4 +136,72 @@ class ProductView extends \Magento\Framework\View\Element\Template
         return $this->conversantHelper->getConfig('brand');
     }
 
+    public function getProductCategories($categoryIds)
+    {
+        return $this->categoryCollectionFactory->create()
+            ->addAttributeToFilter('entity_id', array("in" => $categoryIds))
+            ->addAttributeToFilter('is_active', 1)
+            ->addAttributeToSelect('name')
+            ->addAttributeToSelect('path');
+    }
+
+    public function getDeepestCategory($categories)
+    {
+        $categoryPathCounts = [];
+
+        foreach ($categories as $category) {
+            $explodedPath = explode("/", $category->getPath());
+            $pathCount = count($explodedPath);
+            $categoryPathCounts[$pathCount] = $category;
+        }
+
+        ksort($categoryPathCounts);
+
+        return end($categoryPathCounts);
+
+    }
+
+    public function getCategoryById($categoryId)
+    {
+        return is_numeric($categoryId)
+            ? $this->categoryRepository->get($categoryId)
+            : "";
+    }
+
+    public function getCategoryData($json)
+    {
+        if ($currentCategory = $this->_coreRegistry->registry('current_category')) {
+            $category = $currentCategory;
+        } else {
+            $categoryIds = $this->getProduct()->getCategoryIds();
+            $categories = $this->getProductCategories($categoryIds);
+            $category = $this->getDeepestCategory($categories);
+        }
+
+        if ($category !== null) {
+
+            $explodedPath = explode("/", $category->getPath());
+
+            // remove the Root Catalog & Default Category values
+            unset($explodedPath[0]);
+            unset($explodedPath[1]);
+
+
+            $explodedPath = array_values($explodedPath);
+            $pathArrayCount = count($explodedPath);
+
+            $json['department'] = $this->getCategoryById($explodedPath[0])->getName();
+
+            if ($pathArrayCount == 2) {
+                $json['category'] = $this->getCategoryById($explodedPath[1])->getName();
+            }
+
+            if ($pathArrayCount >= 3) {
+                $json['category'] = $this->getCategoryById($explodedPath[$pathArrayCount-2])->getName();
+                $json['subcategory'] = $this->getCategoryById(end($explodedPath))->getName();
+            }
+        }
+
+        return $json;
+    }
 }
