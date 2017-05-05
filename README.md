@@ -25,6 +25,9 @@ A Conversant module for Magento that integrates with our GTM DataLayer module: h
 - promo_id
 - brand
 - related_products
+- department
+- category
+- sub_category
 
 ### Search Result
 
