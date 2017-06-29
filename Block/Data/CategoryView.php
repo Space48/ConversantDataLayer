@@ -97,7 +97,7 @@ class CategoryView extends \Magento\Framework\View\Element\Template
 
         if ($this->categoryLevel <= self::DEPARTMENT) {
             $json['promo_id'] = (string) self::DEPARTMENT;
-            $json['category'] = $this->getCategory()->getName();
+            $json['department'] = $this->getCategory()->getName();
 
         } elseif ($this->categoryLevel == self::CATEGORY) {
             $json['promo_id'] = (string) self::CATEGORY;
