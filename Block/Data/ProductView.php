@@ -178,7 +178,7 @@ class ProductView extends \Magento\Framework\View\Element\Template
             $category = $this->getDeepestCategory($categories);
         }
 
-        if ($category !== null) {
+        if (!empty($category)) {
 
             $explodedPath = explode("/", $category->getPath());
 
