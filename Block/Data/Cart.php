@@ -2,13 +2,15 @@
 
 namespace Space48\ConversantDataLayer\Block\Data;
 
+use Magento\Framework\Json\Helper\Data;
 use Magento\Framework\View\Element\Template;
+use Magento\Framework\View\Element\Template\Context;
 use Space48\ConversantDataLayer\Helper\Data as ConversantHelper;
 
 class Cart extends Template {
 
     /**
-     * @var \Magento\Framework\Json\Helper\Data
+     * @var Data
      */
     protected $jsonHelper;
 
@@ -20,14 +22,14 @@ class Cart extends Template {
     protected $conversantHelper = null;
 
     /**
-     * @param \Magento\Framework\View\Element\Template\Context $context
-     * @param \Magento\Framework\Json\Helper\Data $jsonHelper
-     * @param GtmHelper $gtmHelper
-     * @param array $data
+     * @param Context          $context
+     * @param Data             $jsonHelper
+     * @param ConversantHelper $conversantHelper
+     * @param array            $data
      */
     public function __construct(
-        \Magento\Framework\View\Element\Template\Context $context,
-        \Magento\Framework\Json\Helper\Data $jsonHelper,
+        Context $context,
+        Data $jsonHelper,
         ConversantHelper $conversantHelper,
         array $data = []
     ) {
@@ -40,6 +42,9 @@ class Cart extends Template {
         );
     }
 
+    /**
+     * @return string
+     */
     protected function _toHtml()
     {
         if (!$this->conversantHelper->isEnabled()) {
@@ -49,7 +54,10 @@ class Cart extends Template {
         return $this->getOutput();
     }
 
-    public function getOutput()
+    /**
+     * @return string
+     */
+    protected function getOutput()
     {
         $json = $result = array();
         $json['promo_id'] = "6";
