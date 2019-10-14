@@ -1,13 +1,13 @@
 <?php
 
-namespace Space48\ConversantDataLayer\Plugin\Plugin;
+namespace Space48\ConversantDataLayer\Plugin;
 
 use Magento\Customer\Helper\Session\CurrentCustomer;
 use Space48\GtmDataLayer\Observer\Frontend\ControllerActionPredispatchObserver;
 
 /**
  * Class ControllerActionPredispatch
- * @package Space48\ConversantDataLayer\Plugin\Plugin
+ * @package Space48\ConversantDataLayer\Plugin
  */
 class ControllerActionPredispatch
 {
