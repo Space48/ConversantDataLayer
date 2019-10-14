@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Space48\GtmDataLayer\Observer\Frontend\ControllerActionPredispatchObserver">
+        <plugin name="Space48_ConversantDataLayer_ControllerActionPredispatchObserver" type="Space48\ConversantDataLayer\Plugin\ControllerActionPredispatch" sortOrder="1" disabled="false"  />
+    </type>
+</config>
